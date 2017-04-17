@@ -1,4 +1,6 @@
 target/
+.mvn/
+mvnw*
 config/application.properties
 src/main/resources/application.properties
 !.mvn/wrapper/maven-wrapper.jar
