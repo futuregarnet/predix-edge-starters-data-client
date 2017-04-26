@@ -72,7 +72,7 @@ public class DataClientController {
     
     @SuppressWarnings("unchecked")
     @RequestMapping(value = "/day/{day}/{sensorName}/{assetType}/{id}", method = RequestMethod.GET)
-    public String getTimeBoundRequest(@PathVariable String day, @PathVariable String sensorName, @PathVariable String assetType, @PathVariable String id) throws JsonProcessingException {
+    public String getSingleDay(@PathVariable String day, @PathVariable String sensorName, @PathVariable String assetType, @PathVariable String id) throws JsonProcessingException {
         com.ge.predix.entity.timeseries.datapoints.queryrequest.Tag tag = new com.ge.predix.entity.timeseries.datapoints.queryrequest.Tag();
         List<com.ge.predix.entity.timeseries.datapoints.queryrequest.Tag> tags = new ArrayList<>();
 
@@ -95,7 +95,44 @@ public class DataClientController {
             long epoch = date.getTimeInMillis();
             
             datapointsQuery.setStart(epoch);
-            datapointsQuery.setEnd(epoch + 86399999); // Start at last millisecond of the day
+            datapointsQuery.setEnd(epoch + 86399999); // Stop at last millisecond of the day
+            datapointsQuery.setTags(tags);
+            
+            List<Header> headers = timeseriesClient.getTimeseriesHeaders();
+            DatapointsResponse datapointsResponse = timeseriesClient.queryForDatapoints(datapointsQuery, headers);
+            
+            return jsonMapper.writeValueAsString(datapointsResponse);
+        } catch (ParseException e) {
+            return jsonMapper.writeValueAsString("ERROR: Unparsable date. Date must be in yyyy-MM-dd format.");
+        }
+    }
+    
+    @SuppressWarnings("unchecked")
+    @RequestMapping(value = "/week/{day}/{sensorName}/{assetType}/{id}", method = RequestMethod.GET)
+    public String getFullWeek(@PathVariable String day, @PathVariable String sensorName, @PathVariable String assetType, @PathVariable String id) throws JsonProcessingException {
+        com.ge.predix.entity.timeseries.datapoints.queryrequest.Tag tag = new com.ge.predix.entity.timeseries.datapoints.queryrequest.Tag();
+        List<com.ge.predix.entity.timeseries.datapoints.queryrequest.Tag> tags = new ArrayList<>();
+
+        Map attribute = new Map();
+        attribute.put("datatype", "FLOAT");
+        Filters attrFilters = new Filters();
+        attrFilters.setAttributes(attribute);
+        tag.setFilters(attrFilters);
+        
+        tags.add(tag);
+        tag.setName(String.join(":", assetType, id, sensorName));
+        tag.setOrder("desc");
+       
+        DatapointsQuery datapointsQuery = new DatapointsQuery();
+        
+        Calendar date = Calendar.getInstance();
+        SimpleDateFormat dayFormat = new SimpleDateFormat("yyyy-MM-dd");
+        try {
+            date.setTime(dayFormat.parse(day));
+            long epoch = date.getTimeInMillis();
+            
+            datapointsQuery.setStart(epoch - 518400000); // Start at first millisecond 6 days ago
+            datapointsQuery.setEnd(epoch + 86399999); // Stop at last millisecond of the day
             datapointsQuery.setTags(tags);
             
             List<Header> headers = timeseriesClient.getTimeseriesHeaders();
