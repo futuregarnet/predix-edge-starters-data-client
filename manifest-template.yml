@@ -1,0 +1,22 @@
+applications:
+  - name: <INSERT_APP_NAME>
+    buildpack: java-buildpack
+    path: target/predix-data-client-0.0.1-SNAPSHOT.jar
+    memory: 512M
+    timeout : 180
+    services:
+        - <INSERT_TIMESERIES_INSTANCE>
+        - <INSERT_UAA_INSTANCE>
+
+env:
+    # NOTE: Some values in curly braces are updated by scripts
+    SPRING_PROFILES_ACTIVE : cloud
+    
+    # Predix Service Settings
+    predix_uaa_name: <INSERT_UAA_INSTANCE>
+    predix_timeseries_name : <INSERT_TIMESERIES_INSTANCE>
+    predix_oauth_clientId : <INSERT_BASE64_CLIENT_SECRET>
+
+    # Default Timeseries Settings
+    predix_timeseries_wspool_maxIdle : 5
+    predix_timeseries_wspool_maxActive : 5    
