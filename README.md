@@ -61,7 +61,7 @@ You can import the app into Spring Tool Suite to run a Spring Boot App or use th
 mvn spring-boot:run
 ```
 
-then navigate to http://localhost:8080/api/latest/<sensor-name>/<asset-name&>/<asset-id>.
+then navigate to **http://<i></i>localhost:8080/api/latest/&lt;sensor-name&gt;/&lt;asset-name&gt;/&lt;asset-id&gt;**.
 
 ## Deploying to Predix Cloud
 You will need to build a distribution version of the app, and deploy it to the Predix.
