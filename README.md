@@ -37,22 +37,23 @@ You will need to copy the application properties template to a file the app can 
 cp config/application-template.properties config/application.properties
 ```
 
-### Configuring Timeseries Bootstrp
+### Configuring Timeseries Bootstrap
 Edit the config/application.properties file and add the following details:
 
-- predix.oauth.issuerId.url: Your UAA Issuer ID (include the /oauth/token endpoint)
-- predix.oauth.clientId: Your UAA Client ID and UAA Client Secret, separated by a colon and Base64 encoded.
-- predix.timeseries.queryUrl: Your TimeSeries Query URL (most common: https://time-series-store-predix.run.aws-usw02-pr.ice.predix.io/v1/datapoints)
-- predix.timeseries.zoneid: Your Time Series Zone ID
-- predix.timeseries.websocket.uri: Your Time Series Web Socket URL (most common: wss://gateway-predix-data-services.run.aws-usw02-pr.ice.predix.io/v1/stream/messages)
-- 
+- **predix.oauth.issuerId.url**: Your UAA Issuer ID (include the /oauth/token endpoint)
+- **predix.oauth.clientId**: Your UAA Client ID and UAA Client Secret, separated by a colon and Base64 encoded.
+- **predix.timeseries.queryUrl**: Your TimeSeries Query URL
+  - Most common: https://time-series-store-predix.run.aws-usw02-pr.ice.predix.io/v1/datapoints
+- **predix.timeseries.zoneid**: Your Time Series Zone ID
+- **predix.timeseries.websocket.uri**: Your Time Series Web Socket URL
+  - Most common: wss://gateway-predix-data-services.run.aws-usw02-pr.ice.predix.io/v1/stream/messages
 
 For the colon separated client credential you'll need to use a Base64 encoder. UNIX/Linux based terminal can use the base64 built in tool.
   
 ```
 echo -n example-client:example-secret | base64
 ```
-Outputs: ZXhhbXBsZS1jbGllbnQ6ZXhhbXBsZS1zZWNyZXQ=
+Copy the output provided (e.g. ZXhhbXBsZS1jbGllbnQ6ZXhhbXBsZS1zZWNyZXQ=)
 
 ## Running the app locally
 You can import the app into Spring Tool Suite to run a Spring Boot App or use the following command in the terminal:
@@ -60,20 +61,19 @@ You can import the app into Spring Tool Suite to run a Spring Boot App or use th
 mvn spring-boot:run
 ```
 
-then navigate to http://localhost:8080/api/latest/&lt;sensor-name&gt;/&lt;asset-name&gt;/&lt;asset-id&gt;.
+then navigate to http://localhost:8080/api/latest/<sensor-name>/<asset-name&>/<asset-id>.
 
 ## Deploying to Predix Cloud
-You will build a distribution version of the app, and deploy it to the Predix.
+You will need to build a distribution version of the app, and deploy it to the Predix.
 
 ### Create a distribution version
-Use gulp to create a distribution version of your app, which contains vulcanized files for more efficient serving.
-You will need to run this command every time you deploy to the Predix.
+Use maven to create a distribution version of your app in the target directory. You will need to run this command every time you deploy to the Predix.
 ```
 mvn clean install
 ```
 
 ### Steps
-You will need to copy the manifest template to a file `cf push` can locate. Because this file contains sensitive information about your UAA instance, manifest.yml been added to the .gitignore file and will not be pushed to GitHub during commits.
+You will also need to copy the manifest template to a file `cf push` can locate. Because this file contains sensitive information about your UAA instance, **manifest.yml** been added to the .gitignore file and will not be pushed to GitHub during commits.
 
 1. Copy the manifest template.
 
@@ -81,11 +81,11 @@ You will need to copy the manifest template to a file `cf push` can locate. Beca
 
 2. Edit the manifest.yml file and add the following details:
 
-    - name: Replace <your-app-name> with the name you want to use for the Predix app
-    - services: Replace <your-uaa-instance> and <your-timeseries-instance> with the name of your UAA and Time Series instances, respectively
-    - predix_uaa_name: Replace <your-uaa-instance> with the name of your UAA instance
-    - predix_timeseries_name: Replace <your-timeseries-instance> with the name of your Time Series instance
-    - predix_oauth_clientId: Replace <uaa-client-id>:<uaa-client-secret> with your UAA Client ID and UAA Client Secret, separated by a colon and Base64 encoded.
+    - **name**: Replace <your-app-name> with the name you want to use for the Predix app
+    - **services**: Replace <your-uaa-instance> and <your-timeseries-instance> with the name of your UAA and Time Series instances, respectively
+    - **predix_uaa_name**: Replace <your-uaa-instance> with the name of your UAA instance
+    - **predix_timeseries_name**: Replace <your-timeseries-instance> with the name of your Time Series instance
+    - **predix_oauth_clientId**: Replace <uaa-client-id>:<uaa-client-secret> with your UAA Client ID and UAA Client Secret, separated by a colon and Base64 encoded.
 
 3. Push to the cloud.
 
