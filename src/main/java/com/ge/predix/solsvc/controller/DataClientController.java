@@ -31,12 +31,12 @@ public class DataClientController {
     @Autowired
     private ObjectMapper jsonMapper;
     
-    @RequestMapping(value = "/latest/{sensorName}/{assetType}/{id}", method = RequestMethod.GET)
-    public String getLatestDatapoints(@PathVariable String sensorName, @PathVariable String assetType, @PathVariable String id) throws JsonProcessingException {
+    @RequestMapping(value = "/latest/{sensorName}/{appName}", method = RequestMethod.GET)
+    public String getLatestDatapoints(@PathVariable String sensorName, @PathVariable String appName) throws JsonProcessingException {
         com.ge.predix.entity.timeseries.datapoints.queryrequest.latest.Tag tag = new com.ge.predix.entity.timeseries.datapoints.queryrequest.latest.Tag();
         List<com.ge.predix.entity.timeseries.datapoints.queryrequest.latest.Tag> tags = new ArrayList<>();
         
-        tag.setName(String.join(":", assetType, id, sensorName));
+        tag.setName(String.join(":", sensorName, appName));
         
         tags.add(tag);
         
@@ -49,12 +49,12 @@ public class DataClientController {
         return jsonMapper.writeValueAsString(datapointsResponse);
     }
     
-    @RequestMapping(value = "/limit_{limit}/{sensorName}/{assetType}/{id}", method = RequestMethod.GET)
-    public String getLimitedDatapoints(@PathVariable int limit, @PathVariable String sensorName, @PathVariable String assetType, @PathVariable String id) throws JsonProcessingException {
+    @RequestMapping(value = "/limit_{limit}/{sensorName}/{appName}", method = RequestMethod.GET)
+    public String getLimitedDatapoints(@PathVariable int limit, @PathVariable String sensorName, @PathVariable String appName) throws JsonProcessingException {
         com.ge.predix.entity.timeseries.datapoints.queryrequest.Tag tag = new com.ge.predix.entity.timeseries.datapoints.queryrequest.Tag();
         List<com.ge.predix.entity.timeseries.datapoints.queryrequest.Tag> tags = new ArrayList<>();
         
-        tag.setName(String.join(":", assetType, id, sensorName));
+        tag.setName(String.join(":", sensorName, appName));
         tag.setLimit(limit);
         tag.setOrder("desc");
         
@@ -71,8 +71,8 @@ public class DataClientController {
     }
     
     @SuppressWarnings("unchecked")
-    @RequestMapping(value = "/day/{day}/{sensorName}/{assetType}/{id}", method = RequestMethod.GET)
-    public String getSingleDay(@PathVariable String day, @PathVariable String sensorName, @PathVariable String assetType, @PathVariable String id) throws JsonProcessingException {
+    @RequestMapping(value = "/day/{day}/{sensorName}/{appName}", method = RequestMethod.GET)
+    public String getSingleDay(@PathVariable String day, @PathVariable String sensorName, @PathVariable String appName) throws JsonProcessingException {
         com.ge.predix.entity.timeseries.datapoints.queryrequest.Tag tag = new com.ge.predix.entity.timeseries.datapoints.queryrequest.Tag();
         List<com.ge.predix.entity.timeseries.datapoints.queryrequest.Tag> tags = new ArrayList<>();
 
@@ -83,7 +83,7 @@ public class DataClientController {
         tag.setFilters(attrFilters);
         
         tags.add(tag);
-        tag.setName(String.join(":", assetType, id, sensorName));
+        tag.setName(String.join(":", sensorName, appName));
         tag.setOrder("desc");
        
         DatapointsQuery datapointsQuery = new DatapointsQuery();
@@ -108,8 +108,8 @@ public class DataClientController {
     }
     
     @SuppressWarnings("unchecked")
-    @RequestMapping(value = "/week/{day}/{sensorName}/{assetType}/{id}", method = RequestMethod.GET)
-    public String getFullWeek(@PathVariable String day, @PathVariable String sensorName, @PathVariable String assetType, @PathVariable String id) throws JsonProcessingException {
+    @RequestMapping(value = "/week/{day}/{sensorName}/{appName}", method = RequestMethod.GET)
+    public String getFullWeek(@PathVariable String day, @PathVariable String sensorName, @PathVariable String appName) throws JsonProcessingException {
         com.ge.predix.entity.timeseries.datapoints.queryrequest.Tag tag = new com.ge.predix.entity.timeseries.datapoints.queryrequest.Tag();
         List<com.ge.predix.entity.timeseries.datapoints.queryrequest.Tag> tags = new ArrayList<>();
 
@@ -120,7 +120,7 @@ public class DataClientController {
         tag.setFilters(attrFilters);
         
         tags.add(tag);
-        tag.setName(String.join(":", assetType, id, sensorName));
+        tag.setName(String.join(":", sensorName, appName));
         tag.setOrder("desc");
        
         DatapointsQuery datapointsQuery = new DatapointsQuery();
