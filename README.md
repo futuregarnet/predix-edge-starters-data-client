@@ -97,7 +97,7 @@ You will also need to copy the manifest template to a file `cf push` can locate.
   Access your application by loading the **API Endpoint** above in your web browser.
 
 ## TODO List
-- [x] Create initial working release
+- [x] Create initial working release (1.0.0)
 - [ ] Integrate Java-based testing framework
 - [ ] Integrate server side logging conventions
 - [x] Expand documention on README.md
