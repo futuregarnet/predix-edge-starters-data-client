@@ -9,7 +9,7 @@ import org.springframework.context.annotation.PropertySource;
 @EnableAutoConfiguration
 @PropertySource("classpath:application-default.properties")
 @ComponentScan("com.ge.predix.solsvc.*")
-@PropertySource("classpath:application-default.properties")
+@PropertySource("classpath:application.properties")
 @ImportResource(
 {
     "classpath*:META-INF/spring/predix-rest-client-scan-context.xml"

@@ -16,10 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ge.predix.entity.timeseries.datapoints.queryrequest.DatapointsQuery;
-import com.ge.predix.entity.timeseries.datapoints.queryrequest.Filters;
 import com.ge.predix.entity.timeseries.datapoints.queryrequest.latest.DatapointsLatestQuery;
 import com.ge.predix.entity.timeseries.datapoints.queryresponse.DatapointsResponse;
-import com.ge.predix.entity.util.map.Map;
 import com.ge.predix.solsvc.timeseries.bootstrap.client.TimeseriesClient;
 
 @RestController
@@ -70,17 +68,10 @@ public class DataClientController {
         return jsonMapper.writeValueAsString(datapointsResponse);
     }
     
-    @SuppressWarnings("unchecked")
     @RequestMapping(value = "/day/{day}/{sensorName}/{appName}", method = RequestMethod.GET)
     public String getSingleDay(@PathVariable String day, @PathVariable String sensorName, @PathVariable String appName) throws JsonProcessingException {
         com.ge.predix.entity.timeseries.datapoints.queryrequest.Tag tag = new com.ge.predix.entity.timeseries.datapoints.queryrequest.Tag();
         List<com.ge.predix.entity.timeseries.datapoints.queryrequest.Tag> tags = new ArrayList<>();
-
-        Map attribute = new Map();
-        attribute.put("datatype", "FLOAT");
-        Filters attrFilters = new Filters();
-        attrFilters.setAttributes(attribute);
-        tag.setFilters(attrFilters);
         
         tags.add(tag);
         tag.setName(String.join(":", sensorName, appName));
@@ -103,22 +94,15 @@ public class DataClientController {
             
             return jsonMapper.writeValueAsString(datapointsResponse);
         } catch (ParseException e) {
-            return jsonMapper.writeValueAsString("ERROR: Unparsable date. Date must be in yyyy-MM-dd format.");
+            return "ERROR: Unparsable date. Date must be in yyyy-MM-dd format.";
         }
     }
     
-    @SuppressWarnings("unchecked")
     @RequestMapping(value = "/week/{day}/{sensorName}/{appName}", method = RequestMethod.GET)
     public String getFullWeek(@PathVariable String day, @PathVariable String sensorName, @PathVariable String appName) throws JsonProcessingException {
         com.ge.predix.entity.timeseries.datapoints.queryrequest.Tag tag = new com.ge.predix.entity.timeseries.datapoints.queryrequest.Tag();
         List<com.ge.predix.entity.timeseries.datapoints.queryrequest.Tag> tags = new ArrayList<>();
 
-        Map attribute = new Map();
-        attribute.put("datatype", "FLOAT");
-        Filters attrFilters = new Filters();
-        attrFilters.setAttributes(attribute);
-        tag.setFilters(attrFilters);
-        
         tags.add(tag);
         tag.setName(String.join(":", sensorName, appName));
         tag.setOrder("desc");
