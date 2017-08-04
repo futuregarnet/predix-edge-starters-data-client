@@ -90,11 +90,11 @@ You will also need to copy the manifest template to a file `cf push` can locate.
 
 2. Edit the manifest.yml file and add the following details:
 
-    - **name**: Replace <your-app-name> with the name you want to use for the Predix app
-    - **services**: Replace <your-uaa-instance> and <your-timeseries-instance> with the name of your UAA and Time Series instances, respectively
-    - **predix_uaa_name**: Replace <your-uaa-instance> with the name of your UAA instance
-    - **predix_timeseries_name**: Replace <your-timeseries-instance> with the name of your Time Series instance
-    - **predix_oauth_clientId**: Replace <uaa-client-id>:<uaa-client-secret> with your UAA Client ID and UAA Client Secret, separated by a colon and Base64 encoded.
+    - **name**: Replace &lt;your-app-name&gt; with the name you want to use for the Predix app
+    - **services**: Replace &lt;your-uaa-instance&gt; and &lt;your-timeseries-instance&gt; with the name of your UAA and Time Series instances, respectively
+    - **predix_uaa_name**: Replace &lt;your-uaa-instance&gt; with the name of your UAA instance
+    - **predix_timeseries_name**: Replace &lt;your-timeseries-instance&gt; with the name of your Time Series instance
+    - **predix_oauth_clientId**: Replace &lt;uaa-client-id&gt;:&lt;uaa-client-secret&gt; with your UAA Client ID and UAA Client Secret, separated by a colon and Base64 encoded.
 
 3. Push to the cloud.
 
