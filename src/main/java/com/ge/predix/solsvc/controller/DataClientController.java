@@ -3,6 +3,7 @@ package com.ge.predix.solsvc.controller;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ge.predix.entity.timeseries.datapoints.queryrequest.Aggregation;
 import com.ge.predix.entity.timeseries.datapoints.queryrequest.DatapointsQuery;
 import com.ge.predix.entity.timeseries.datapoints.queryrequest.latest.DatapointsLatestQuery;
 import com.ge.predix.entity.timeseries.datapoints.queryresponse.DatapointsResponse;
@@ -29,6 +31,8 @@ public class DataClientController {
     @Autowired
     private ObjectMapper jsonMapper;
     
+    final static String unsuccessfulQueryError = "Query was unsuccessful.";
+    
     @RequestMapping(value = "/latest/{sensorName}/{appName}", method = RequestMethod.GET)
     public String getLatestDatapoints(@PathVariable String sensorName, @PathVariable String appName) throws JsonProcessingException {
         com.ge.predix.entity.timeseries.datapoints.queryrequest.latest.Tag tag = new com.ge.predix.entity.timeseries.datapoints.queryrequest.latest.Tag();
@@ -42,9 +46,13 @@ public class DataClientController {
         datapointsLatestQuery.setTags(tags);
         
         List<Header> headers = timeseriesClient.getTimeseriesHeaders();
-        DatapointsResponse datapointsResponse = timeseriesClient.queryForLatestDatapoint(datapointsLatestQuery, headers);
-
-        return jsonMapper.writeValueAsString(datapointsResponse);
+        try {
+            DatapointsResponse datapointsResponse = timeseriesClient.queryForLatestDatapoint(datapointsLatestQuery, headers);
+            return jsonMapper.writeValueAsString(datapointsResponse);
+        } catch (RuntimeException e) {
+            return unsuccessfulQueryError;
+        }
+        
     }
     
     @RequestMapping(value = "/limit_{limit}/{sensorName}/{appName}", method = RequestMethod.GET)
@@ -63,9 +71,50 @@ public class DataClientController {
         datapointsQuery.setTags(tags);
         
         List<Header> headers = timeseriesClient.getTimeseriesHeaders();
-        DatapointsResponse datapointsResponse = timeseriesClient.queryForDatapoints(datapointsQuery, headers);
+        try {
+            DatapointsResponse datapointsResponse = timeseriesClient.queryForDatapoints(datapointsQuery, headers);
+            return jsonMapper.writeValueAsString(datapointsResponse);
+        } catch (RuntimeException e) {
+            return unsuccessfulQueryError;
+        }
+    }
+    
+    @RequestMapping(value = "/aggregation/{aggregationType}/{sensorName}/{appName}", method = RequestMethod.GET)
+    public String getSingleAggregateDatapoint(@PathVariable String aggregationType, @PathVariable String sensorName, @PathVariable String appName)
+            throws JsonProcessingException {
+        final String[] validAggregationType = new String[] {"avg", "count", "dev", "min", "max", "sum"};
+        final String typeError = "ERROR: Invalid Aggregation Type. Use one of the following as an aggregation type: " + Arrays.toString(validAggregationType);
         
-        return jsonMapper.writeValueAsString(datapointsResponse);
+        if (!Arrays.asList(validAggregationType).contains(aggregationType)) {
+            return typeError;
+        }
+        
+        com.ge.predix.entity.timeseries.datapoints.queryrequest.Tag tag = new com.ge.predix.entity.timeseries.datapoints.queryrequest.Tag();
+        com.ge.predix.entity.timeseries.datapoints.queryrequest.Sampling sampling = new com.ge.predix.entity.timeseries.datapoints.queryrequest.Sampling();
+        List<com.ge.predix.entity.timeseries.datapoints.queryrequest.Tag> tags = new ArrayList<>();
+        Aggregation aggregation = new Aggregation();
+        ArrayList<Aggregation> aggregations = new ArrayList<Aggregation>();
+        
+        sampling.setDatapoints(1);
+        aggregation.setType(aggregationType);
+        aggregation.setSampling(sampling);
+        aggregations.add(aggregation);
+        
+        tag.setName(String.join(":", sensorName, appName));
+        tag.setAggregations(aggregations);
+        tags.add(tag);
+        
+        DatapointsQuery datapointsQuery = new DatapointsQuery();
+        datapointsQuery.setStart(0);
+        datapointsQuery.setTags(tags);
+        
+        List<Header> headers = timeseriesClient.getTimeseriesHeaders();
+        try {
+            DatapointsResponse datapointsResponse = timeseriesClient.queryForDatapoints(datapointsQuery, headers);
+            return jsonMapper.writeValueAsString(datapointsResponse);
+        } catch (RuntimeException e) {
+            return unsuccessfulQueryError;
+        }
     }
     
     @RequestMapping(value = "/day/{day}/{sensorName}/{appName}", method = RequestMethod.GET)
@@ -95,6 +144,8 @@ public class DataClientController {
             return jsonMapper.writeValueAsString(datapointsResponse);
         } catch (ParseException e) {
             return "ERROR: Unparsable date. Date must be in yyyy-MM-dd format.";
+        } catch (RuntimeException e) {
+            return unsuccessfulQueryError;
         }
     }
     
@@ -125,6 +176,8 @@ public class DataClientController {
             return jsonMapper.writeValueAsString(datapointsResponse);
         } catch (ParseException e) {
             return jsonMapper.writeValueAsString("ERROR: Unparsable date. Date must be in yyyy-MM-dd format.");
+        } catch (RuntimeException e) {
+            return unsuccessfulQueryError;
         }
     }
 }

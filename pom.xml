@@ -24,6 +24,7 @@
 		<java.version>1.8</java.version>
 		<predix-timeseries-client.version>2.1.11</predix-timeseries-client.version>
 		<predix-rest-client.version>2.0.11</predix-rest-client.version>
+		<custom-timeseries-ext-model.version>2.3.2</custom-timeseries-ext-model.version>
 	</properties>
 
 	<dependencies>
@@ -49,6 +50,11 @@
 		  <groupId>com.ge.predix.solsvc</groupId>
 		  <artifactId>predix-rest-client</artifactId>
 		  <version>${predix-rest-client.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.ge.predix.solsvc</groupId>
+			<artifactId>ext-model</artifactId>
+			<version>${custom-timeseries-ext-model.version}</version>
 		</dependency>
 	</dependencies>
 

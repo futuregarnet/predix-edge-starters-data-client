@@ -19,7 +19,7 @@ git clone https://github.com/futuregarnet/predix-edge-starters-data-client.git
 cd predix-edge-starters-data-client
 ```
 
-### Install tools
+### Install Tools
 If you don't have them already, you'll need Maven on your machine.  
 
 1. Install [maven](https://maven.apache.org/download.cgi). Installation instructions can be found [here](https://maven.apache.org/install.html).
@@ -31,13 +31,22 @@ To learn how to create a Predix UAA instance, follow [this guide](https://www.pr
 
 To learn how to create a Predix Timeseries instance, follow [this guide](https://www.predix.io/resources/tutorials/tutorial-details.html?tutorial_id=1549).
 
+### Install Dependancies
+This data client requires a customized version of the Predix Timeseries SDK data model which modified parts of [dpqueryrequest.xsd](https://github.com/PredixDev/ext-interface/blob/master/ext-model/src/main/resources/META-INF/schemas/predix/entity/timeseries/dpqueryrequest.xsd) to handle more aggregation types the require a **sampling** aggregator with a datapoint specification. Use the following command to install the required dependency.
+
+```
+mvn install:install-file -Dfile=config/ext-model-2.3.2.jar -DgroupId=com.ge.predix.solsvc -DartifactId=ext-model -Dversion=2.3.2 -Dpackaging=jar
+
+```
+
+### Configuring Timeseries Bootstrap
+
 You will need to copy the application properties template to a file the app can locate. Because this file contains sensitive information about your UAA instance, application.properties been added to the .gitignore file and will not be pushed to GitHub during commits.
 
 ```
 cp config/application-template.properties config/application.properties
 ```
 
-### Configuring Timeseries Bootstrap
 Edit the config/application.properties file and add the following details:
 
 - **predix.oauth.issuerId.url**: Your UAA Issuer ID (include the /oauth/token endpoint)
